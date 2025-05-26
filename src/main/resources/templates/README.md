@@ -1,0 +1,10 @@
+# Configuracion para la conexion con la base de datos.
+
+<!-- 
+spring.datasource.url=jdbc:mysql://localhost:3306/name_database
+spring.datasource.username=root
+spring.datasource.password=
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect -->

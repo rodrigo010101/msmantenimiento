@@ -1,0 +1,99 @@
+package com.edutech.msmantenimiento.controller;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.apache.catalina.connector.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.edutech.msmantenimiento.model.Mantenimiento;
+import com.edutech.msmantenimiento.service.MantenimientoService;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+@RestController
+@RequestMapping("/api/v1/mantenimiento")
+
+public class MantenimientoController {
+    @Autowired
+    private MantenimientoService mantenimientoService;
+
+    // listar
+    @GetMapping
+    public ResponseEntity<List<Mantenimiento>> listarMantenimiento() {
+        // objeto
+        List<Mantenimiento> mantenimientos = mantenimientoService.findAll();
+        if (mantenimientos.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(mantenimientos, HttpStatus.OK);
+    }
+
+    // crear
+    @PostMapping
+    public ResponseEntity<Mantenimiento> createMantenimiento(@RequestBody Mantenimiento mantenimiento) {
+        // objeto
+        Optional<Mantenimiento> crearMantenimiento = mantenimientoService
+                .findById(mantenimiento.getIdventana());
+        if (crearMantenimiento.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        } else {
+            Mantenimiento nuevoMantenimiento = mantenimientoService.save(mantenimiento);
+            return new ResponseEntity<>(nuevoMantenimiento, HttpStatus.CREATED);
+        }
+    }
+
+    // leer
+    @GetMapping("/{idventana}")
+    public ResponseEntity<Mantenimiento> readMantenimiento(@PathVariable Integer idventana) {
+        Optional<Mantenimiento> mantenimiento = mantenimientoService.findById(idventana);
+        if (mantenimiento.isPresent()) {
+            return new ResponseEntity<>(mantenimiento.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // delete por id
+    @DeleteMapping("/{idventana}")
+    public ResponseEntity<?> deleteMantenimiento(@PathVariable Integer idventana) {
+        try {
+            mantenimientoService.deleteById(idventana);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // update por id
+    @GetMapping("/{idventana}")
+    public ResponseEntity<Mantenimiento> updateMantenimiento(@PathVariable Integer idventana,
+            @RequestBody Mantenimiento mantenimiento) {
+        // obj mant
+        Optional<Mantenimiento> mant = mantenimientoService.findById(idventana);
+
+        if (!mant.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        try {
+            // obj mant
+            Mantenimiento mantExiste = mant.get();
+            mantExiste.setFechaInicioProgramada(mantenimiento.getFechaInicioProgramada());
+            mantExiste.setFechaFinProgramada(mantenimiento.getFechaInicioProgramada());
+            mantExiste.setEstado(mantenimiento.getEstado());
+            mantenimientoService.save(mantExiste);
+            return new ResponseEntity<>(mantExiste, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+}
