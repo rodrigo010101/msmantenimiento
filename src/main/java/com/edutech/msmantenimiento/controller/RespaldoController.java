@@ -63,15 +63,10 @@ public class RespaldoController {
     // create
     @PostMapping
     public ResponseEntity<Respaldo> crearRespaldo(@RequestBody Respaldo respaldo) {
-        // obj
-        Optional<Respaldo> crearRespaldo = respaldoService.findById(respaldo.getIdrespaldo());
-        // if (crearRespaldo.isPresent()) {
-        // return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-        // } else {
-        // nuevoObjeto
+
         Respaldo nuevoRespaldo = respaldoService.save(respaldo);
         return new ResponseEntity<>(nuevoRespaldo, HttpStatus.CREATED);
-        // }
+
     }
 
     // update
