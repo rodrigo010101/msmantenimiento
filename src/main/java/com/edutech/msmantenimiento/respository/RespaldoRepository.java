@@ -5,8 +5,6 @@ import org.springframework.stereotype.Repository;
 
 import com.edutech.msmantenimiento.model.Respaldo;
 
-import io.micrometer.common.lang.NonNull;
-
 import java.util.Optional;
 
 @Repository
@@ -16,9 +14,8 @@ public interface RespaldoRepository extends JpaRepository<Respaldo, Integer> {
     // Respaldo save(Respaldo respaldo);
 
     // buscar por id
-    @Override
-    @NonNull
-    Optional<Respaldo> findById(@NonNull Integer idrespaldo);
+
+    Optional<Respaldo> findById(int idrespaldo);
 
     // buscar todos
     // List<Respaldo> findAllList();

@@ -21,7 +21,7 @@ public class MantenimientoService {
     }
 
     // Buscar por id
-    public Optional<Mantenimiento> findById(int idventana) {
+    public Mantenimiento findById(int idventana) {
         return mantenimientoRepository.findById(idventana);
     }
 
@@ -35,4 +35,17 @@ public class MantenimientoService {
         mantenimientoRepository.deleteById(idventana);
     }
 
+    public boolean updateMantenimiento(int idventana, Mantenimiento mantenimiento) {
+
+        Mantenimiento mante = mantenimientoRepository.findById(idventana);
+
+        mante.setEstado(mantenimiento.getEstado());
+        mante.setFechaFinProgramada(mantenimiento.getFechaFinProgramada());
+        mante.setFechaInicioProgramada(mantenimiento.getFechaInicioProgramada());
+        mante.setIdventana(idventana);
+
+        mantenimientoRepository.save(mante);
+        return true;
+
+    }
 }
