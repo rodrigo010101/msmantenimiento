@@ -3,7 +3,6 @@ package com.edutech.msmantenimiento.controller;
 import java.util.List;
 import java.util.Optional;
 
-import org.aspectj.apache.bcel.generic.RET;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +16,11 @@ import com.edutech.msmantenimiento.service.RespaldoService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
+@RequestMapping("api/v1/respaldo")
+
 public class RespaldoController {
     @Autowired
     private RespaldoService respaldoService;
@@ -63,13 +65,13 @@ public class RespaldoController {
     public ResponseEntity<Respaldo> crearRespaldo(@RequestBody Respaldo respaldo) {
         // obj
         Optional<Respaldo> crearRespaldo = respaldoService.findById(respaldo.getIdrespaldo());
-        if (crearRespaldo.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-        } else {
-            // nuevoObjeto
-            Respaldo nuevoRespaldo = respaldoService.save(respaldo);
-            return new ResponseEntity<>(nuevoRespaldo, HttpStatus.OK);
-        }
+        // if (crearRespaldo.isPresent()) {
+        // return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        // } else {
+        // nuevoObjeto
+        Respaldo nuevoRespaldo = respaldoService.save(respaldo);
+        return new ResponseEntity<>(nuevoRespaldo, HttpStatus.CREATED);
+        // }
     }
 
     // update

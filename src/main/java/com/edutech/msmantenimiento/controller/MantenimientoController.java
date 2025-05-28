@@ -1,7 +1,6 @@
 package com.edutech.msmantenimiento.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,14 +41,10 @@ public class MantenimientoController {
     @PostMapping
     public ResponseEntity<Mantenimiento> createMantenimiento(@RequestBody Mantenimiento mantenimiento) {
         // objeto
-        Mantenimiento crearMantenimiento = mantenimientoService
-                .findById(mantenimiento.getIdventana());
-        if (crearMantenimiento == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-        } else {
-            Mantenimiento nuevoMantenimiento = mantenimientoService.save(mantenimiento);
-            return new ResponseEntity<>(nuevoMantenimiento, HttpStatus.CREATED);
-        }
+
+        Mantenimiento nuevoMantenimiento = mantenimientoService.save(mantenimiento);
+        return new ResponseEntity<>(nuevoMantenimiento, HttpStatus.CREATED);
+
     }
 
     // leer
