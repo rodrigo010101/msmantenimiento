@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.edutech.msmantenimiento.model.Mantenimiento;
+import com.edutech.msmantenimiento.model.Mantenimiento.TipoEstado;
 import com.edutech.msmantenimiento.respository.MantenimientoRepository;
 
 @Service
@@ -21,7 +22,27 @@ public class MantenimientoService {
 
     // Buscar por id
     public Mantenimiento findById(int idventana) {
-        return mantenimientoRepository.findById(idventana);
+
+        Mantenimiento mante = mantenimientoRepository.findById(idventana);
+        if (mante == null) {
+            throw new RuntimeException("No encontrado");
+        }
+        return mante;
+    }
+
+    public void activarMantenimiento(int idventana) {
+        Mantenimiento mantenimiento = mantenimientoRepository.findById(idventana);
+
+        mantenimiento.activarRespaldo();
+        mantenimiento.setEstado(TipoEstado.EN_PROCESO);
+        mantenimientoRepository.save(mantenimiento);
+    }
+
+    public void desactivarMantenimiento(int idventana) {
+        Mantenimiento mantenimiento = mantenimientoRepository.findById(idventana);
+        mantenimiento.desactivarRespaldo();
+        mantenimiento.setEstado(TipoEstado.EN_PROCESO);
+        mantenimientoRepository.save(mantenimiento);
     }
 
     // listar

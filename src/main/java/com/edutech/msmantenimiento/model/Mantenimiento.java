@@ -9,6 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,10 +33,32 @@ public class Mantenimiento {
     private LocalDate fechaFinProgramada;
 
     @Enumerated(EnumType.STRING)
-    private enumEstado estado;
+    private TipoEstado estado;
 
-    public enum enumEstado {
+    public enum TipoEstado {
         COMPLETA, EN_PROCESO, FALLIDO
+    }
+
+    private boolean respaldoActivo;
+
+    @OneToOne
+    private Respaldo respaldo;
+
+    public Mantenimiento(Respaldo respaldo) {
+        this.respaldo = respaldo;
+        this.respaldoActivo = true;
+    }
+
+    public void desactivarRespaldo() {
+        this.respaldoActivo = false;
+    }
+
+    public void activarRespaldo() {
+        this.respaldoActivo = true;
+    }
+
+    public void setRespaldoActivo(boolean respaldoActivo) {
+        this.respaldoActivo = respaldoActivo;
     }
 
 }
