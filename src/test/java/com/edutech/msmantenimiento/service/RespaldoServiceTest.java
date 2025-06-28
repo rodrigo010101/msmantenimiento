@@ -1,9 +1,14 @@
 package com.edutech.msmantenimiento.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.booleanThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -96,13 +101,62 @@ public class RespaldoServiceTest {
         LocalDate fechaInicio = LocalDate.now();
         LocalDate fechaFin = LocalDate.now();
 
-        Respaldo respaldo = new Respaldo(1, fechaInicio, fechaFin, new BigDecimal("10000.00"), enumEstado.COMPLETA);
-        Respaldo respaldo1 = new Respaldo(2, fechaInicio, fechaFin, new BigDecimal("20000.00"), enumEstado.EN_PROCESO);
-        Respaldo respaldo2 = new Respaldo(3, fechaInicio, fechaFin, new BigDecimal("30000.00"), enumEstado.FALLIDO);
+        Respaldo respaldo = new Respaldo(1, fechaInicio, fechaFin, new BigDecimal("10000.00"), enumEstado.COMPLETA,
+                true);
+        Respaldo respaldo1 = new Respaldo(2, fechaInicio, fechaFin, new BigDecimal("20000.00"), enumEstado.EN_PROCESO,
+                true);
+        Respaldo respaldo2 = new Respaldo(3, fechaInicio, fechaFin, new BigDecimal("30000.00"), enumEstado.FALLIDO,
+                true);
 
         List<Respaldo> listRespaldo = new ArrayList<>(Arrays.asList(respaldo, respaldo1, respaldo2));
 
         when(respaldoRepository.findAll()).thenReturn(listRespaldo);
+
+        List<Respaldo> resultado = respaldoService.findAllList();
+
+        assertEquals(listRespaldo, resultado);
+        assertFalse(resultado.isEmpty());
+        assertEquals(listRespaldo.size(), resultado.size());
+        assertEquals(3, resultado.size());
+
+        verify(respaldoRepository).findAll();
+    }
+
+    @Test
+    void eliminarRespaldoporId() {
+        doNothing().when(respaldoRepository).deleteById(1);
+        respaldoService.deleteById(1);
+        verify(respaldoRepository).deleteById(1);
+    }
+
+    @Test
+    void desactivarRespaldoYdebeRetornarTrue() {
+
+        Respaldo respaldo = new Respaldo();
+
+        respaldo.setHabilitado(false);
+        respaldo.deshabilitado();
+        assertFalse(respaldo.isHabilitado());
+
+        when(respaldoRepository.save(any(Respaldo.class))).thenReturn(respaldo);
+        respaldoService.save(respaldo);
+        verify(respaldoRepository).save(capturador.capture());
+        assertEquals(respaldo, capturador.getValue());
+
+    }
+
+    @Test
+    void activarRespaldoDebeRetornarFalse() {
+        Respaldo respaldo = new Respaldo();
+        respaldo.setHabilitado(true);
+        respaldo.deshabilitado();
+        assertFalse(respaldo.isHabilitado());
+
+        when(respaldoRepository.save(any(Respaldo.class))).thenReturn(respaldo);
+
+        respaldoService.save(respaldo);
+        verify(respaldoRepository).save(capturador.capture());
+        assertEquals(respaldo, capturador.getValue());
 
     }
 

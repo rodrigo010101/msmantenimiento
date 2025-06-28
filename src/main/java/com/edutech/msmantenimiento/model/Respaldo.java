@@ -41,4 +41,14 @@ public class Respaldo {
         COMPLETA, EN_PROCESO, FALLIDO
     }
 
+    private boolean habilitado = true;
+
+    public void habilitado() {
+        this.habilitado = true;
+    }
+
+    public void deshabilitado() {
+        this.habilitado = false;
+    }
+
 }

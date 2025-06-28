@@ -1,5 +1,6 @@
 package com.edutech.msmantenimiento.service;
 
+import java.security.cert.CertPathValidatorException.Reason;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.edutech.msmantenimiento.model.Respaldo;
 import com.edutech.msmantenimiento.respository.RespaldoRepository;
+
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class RespaldoService {
@@ -35,8 +39,25 @@ public class RespaldoService {
         respaldoRepository.deleteById(idrespaldo);
     }
 
-    // incorporar el activar y desactuivar respaldo
-    // public boolean desactivarRespaldo(){
-    // }
+    public void activarRespaldo(Integer id) {
 
+        Optional<Respaldo> respaldo = respaldoRepository.findById(id);
+        if (respaldo.isPresent()) {
+            Respaldo res = respaldo.get();
+            res.setHabilitado(true);
+            respaldoRepository.save(res);
+        }
+    }
+
+    public void desactivarRespaldo(Integer id) {
+        Optional<Respaldo> respaldo = respaldoRepository.findById(id);
+        if (respaldo.isPresent()) {
+            Respaldo res = respaldo.get();
+            res.setHabilitado(false);
+            respaldoRepository.save(res);
+        } else {
+            throw new EntityNotFoundException("No existe id" + id);
+        }
+
+    }
 }
