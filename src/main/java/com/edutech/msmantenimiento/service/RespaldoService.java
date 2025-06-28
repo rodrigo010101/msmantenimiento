@@ -1,6 +1,5 @@
 package com.edutech.msmantenimiento.service;
 
-import java.security.cert.CertPathValidatorException.Reason;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.edutech.msmantenimiento.model.Respaldo;
 import com.edutech.msmantenimiento.respository.RespaldoRepository;
 
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
