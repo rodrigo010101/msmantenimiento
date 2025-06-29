@@ -57,12 +57,12 @@ public class RespaldoControllerTest {
         when(respaldoService.findAllList()).thenReturn(List.of(respaldo));
         // Realiza la peticion GET a /api/respaldo y verifica que la respuesta sea
         // correcta
-
+        LocalDate fechaInicio = LocalDate.now();
         mockMvc.perform(get("api/v1/respaldo"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].habilitado").value(true))
-                .andExpect(jsonPath("$[0].fechaInicio").value(LocalDate.now()));
+                .andExpect(jsonPath("$[0].fechaInicio").value(fechaInicio.toString()));
     }
 
     @Test
@@ -72,8 +72,8 @@ public class RespaldoControllerTest {
         // REALIZAR LA PETICION GET A /idrespaldo
         mockMvc.perform(get("/idrespaldo"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.habilitado").value(false));
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].habilitado").value(false));
     }
 
     @Test
@@ -86,7 +86,7 @@ public class RespaldoControllerTest {
         LocalDate fechaFin = LocalDate.now();
 
         // objeto de prueba
-        // arnandi el json del request. esto es lo que envio al endpoint.
+        // anadir el json del request. esto es lo que envio al endpoint.
         Respaldo nuevorespaldo = new Respaldo();
         nuevorespaldo.setIdrespaldo(1);
         nuevorespaldo.setFechaInicio(fechaInicio);
@@ -99,12 +99,12 @@ public class RespaldoControllerTest {
         // json y verificamos la respuesta que el endpoint devuelve
         mockMvc.perform(post("/api/v1/respaldo")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonBody)) // convierte ek objeto respaldo a json
+                .content(jsonBody)) // convierte el objeto respaldo a json
                 .andExpect(status().isOk()) // Verifica que el estado de la respuesta sea 200 OK
-                .andExpect(jsonPath("$.id").value(1)) // Verifica que el id del objeto devuelto sea 1
-                .andExpect(jsonPath("$.fechaInicio").value(LocalDate.now()))
-                .andExpect(jsonPath("$.fechaFin").value(LocalDate.now()))
-                .andExpect(jsonPath("$.habilitado").value(true));
+                .andExpect(jsonPath("$[0].id").value(1)) // Verifica que el id del objeto devuelto sea 1
+                .andExpect(jsonPath("$[0].fechaInicio").value(fechaInicio.toString()))
+                .andExpect(jsonPath("$[0].fechaFin").value(fechaFin.toString()))
+                .andExpect(jsonPath("$[0].habilitado").value(true));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class RespaldoControllerTest {
         LocalDate fechaFin = LocalDate.now();
 
         // objeto de prueba
-        // arnandi el json del request. esto es lo que envio al endpoint.
+        // Armando el JSON del request. Esto es lo que envío al endpoint.
         Respaldo nuevorespaldo = new Respaldo();
         nuevorespaldo.setIdrespaldo(1);
         nuevorespaldo.setFechaInicio(fechaInicio);
@@ -129,16 +129,16 @@ public class RespaldoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody)) // convierte ek objeto respaldo a json
                 .andExpect(status().isOk()) // Verifica que el estado de la respuesta sea 200 OK
-                .andExpect(jsonPath("$.id").value(1)) // Verifica que el id del objeto devuelto sea 1
-                .andExpect(jsonPath("$.fechaInicio").value(LocalDate.now()))
-                .andExpect(jsonPath("$.fechaFin").value(LocalDate.now()))
-                .andExpect(jsonPath("$.habilitado").value(true));
+                .andExpect(jsonPath("$[0].id").value(1)) // Verifica que el id del objeto devuelto sea 1
+                .andExpect(jsonPath("$[0].fechaInicio").value(fechaInicio.toString()))
+                .andExpect(jsonPath("$[0].fechaFin").value(fechaFin.toString()))
+                .andExpect(jsonPath("$[0].habilitado").value(true));
     }
 
     @Test
     public void testDeleteRespaldo() throws Exception {
 
-        // definit el comportamiento del mock al llamar el metodo delete
+        // definir el comportamiento del mock al llamar el metodo delete
         doNothing().when(respaldoService).deleteById(1);
 
         // realizar una peticion delete
