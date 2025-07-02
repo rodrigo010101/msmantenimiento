@@ -2,6 +2,7 @@ package com.edutech.msmantenimiento.assemblers;
 
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import com.edutech.msmantenimiento.controller.MantenimientoControllerV2;
@@ -15,7 +16,8 @@ public class MantenimientoModelAssemblers
         implements RepresentationModelAssembler<Mantenimiento, EntityModel<Mantenimiento>> {
 
     @Override
-    public EntityModel<Mantenimiento> toModel(Mantenimiento mantenimiento) {
+
+    public @NonNull EntityModel<Mantenimiento> toModel(@NonNull Mantenimiento mantenimiento) {
 
         return EntityModel.of(mantenimiento,
                 linkTo(methodOn(MantenimientoControllerV2.class).getMantenimientoById(mantenimiento.getIdventana()))

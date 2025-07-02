@@ -2,6 +2,7 @@ package com.edutech.msmantenimiento.assemblers;
 
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import com.edutech.msmantenimiento.controller.RespaldoControllerV2;
@@ -13,7 +14,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 public class RespaldoModelAssemblers implements RepresentationModelAssembler<Respaldo, EntityModel<Respaldo>> {
 
     @Override
-    public EntityModel<Respaldo> toModel(Respaldo respaldo) {
+    public @NonNull EntityModel<Respaldo> toModel(@NonNull Respaldo respaldo) {
 
         return EntityModel.of(respaldo,
                 linkTo(methodOn(RespaldoControllerV2.class).getRespaldoById(respaldo.getIdrespaldo())).withSelfRel(),
