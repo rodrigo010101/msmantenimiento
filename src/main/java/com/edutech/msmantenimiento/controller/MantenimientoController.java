@@ -63,7 +63,7 @@ public class MantenimientoController {
     public ResponseEntity<?> deleteMantenimiento(@PathVariable Integer idventana) {
         try {
             mantenimientoService.deleteById(idventana);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -75,9 +75,9 @@ public class MantenimientoController {
             @RequestBody Mantenimiento mantenimiento) {
 
         if (mantenimientoService.updateMantenimiento(idventana, mantenimiento)) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok(mantenimiento);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 

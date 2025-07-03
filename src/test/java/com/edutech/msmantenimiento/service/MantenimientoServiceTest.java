@@ -61,8 +61,8 @@ public class MantenimientoServiceTest {
         assertEquals(1, resultado.getIdventana());
         assertEquals(TipoEstado.COMPLETA, resultado.getEstado());
 
-        verify(mantenimientoRepository).save(resultado);
-        verify(mantenimientoRepository.save(manteCaptor.capture()));
+        verify(mantenimientoRepository).save(manteCaptor.capture());
+
     }
 
     @Test

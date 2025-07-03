@@ -2,8 +2,6 @@ package com.edutech.msmantenimiento.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
@@ -50,7 +48,7 @@ public class RespaldoServiceTest {
     ArgumentCaptor<Respaldo> capturador;
 
     @Captor
-    ArgumentCaptor<Integer> idCaptor;
+    private ArgumentCaptor<Integer> idCaptor;
 
     @Test
     void guardarElRespaldoYdebeRetornarelGuardado() {
@@ -58,21 +56,14 @@ public class RespaldoServiceTest {
         Respaldo respaldo = new Respaldo();
         respaldo.setIdrespaldo(1);
 
-        when(respaldoRepository.save(respaldo)).thenReturn(respaldo);
-        when(respaldoRepository.findById(1)).thenReturn(Optional.of(respaldo));
+        when(respaldoRepository.save(any(Respaldo.class))).thenReturn(respaldo);
 
         Respaldo guardado = respaldoService.save(respaldo);
-        assertNotNull(guardado);
-        assertEquals(1, guardado.getIdrespaldo());
+        verify(respaldoRepository).save(guardado);
+        ArgumentCaptor<Respaldo> captor = ArgumentCaptor.forClass(Respaldo.class);
+        verify(respaldoRepository).save(captor.capture());
 
-        Optional<Respaldo> encontrado = respaldoService.findById(1);
-        assertTrue(encontrado.isPresent());
-        assertNotNull(encontrado);
-        assertEquals(guardado, encontrado.get());
-        assertEquals(1, encontrado.get().getIdrespaldo());
-
-        Respaldo capturado = capturador.getValue();
-        assertEquals(encontrado, capturado);
+        Respaldo capturado = captor.getValue();
         assertEquals(1, capturado.getIdrespaldo());
 
     }
@@ -80,17 +71,15 @@ public class RespaldoServiceTest {
     @Test
     void buscarPorIdYretornarElObjetoPorid() {
 
-        Respaldo respaldo = new Respaldo();
-        respaldo.setIdrespaldo(1);
+        Respaldo linkId = new Respaldo();
 
-        when(respaldoRepository.findById(anyInt())).thenReturn(Optional.of(new Respaldo()));
+        linkId.setIdrespaldo(1);
+        when(respaldoRepository.findById(anyInt())).thenReturn(Optional.of(linkId));
 
-        respaldoService.findById(1);
+        Optional<Respaldo> resultado = respaldoService.findById(1);
 
-        verify(respaldoRepository).findById(idCaptor.capture());
-        Integer capturado = idCaptor.getValue();
-
-        assertEquals(1, capturado);
+        assertEquals(1, resultado.get().getIdrespaldo());
+        verify(respaldoRepository).findById(1);
     }
 
     @Test

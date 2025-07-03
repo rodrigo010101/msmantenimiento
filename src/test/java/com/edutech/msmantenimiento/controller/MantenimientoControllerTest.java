@@ -1,5 +1,7 @@
 package com.edutech.msmantenimiento.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -10,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDate;
 import java.util.List;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +22,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
 
 import com.edutech.msmantenimiento.model.Mantenimiento;
-import com.edutech.msmantenimiento.model.Respaldo.enumEstado;
+import com.edutech.msmantenimiento.model.Mantenimiento.TipoEstado;
 import com.edutech.msmantenimiento.service.MantenimientoService;
-import com.edutech.msmantenimiento.service.RespaldoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-@WebMvcTest(RespaldoService.class)
+@WebMvcTest(MantenimientoController.class)
 
 public class MantenimientoControllerTest {
 
@@ -57,17 +60,22 @@ public class MantenimientoControllerTest {
 
     @Test
     public void testGetAllMantenimiento() throws Exception {
+        Mantenimiento mantenimiento = new Mantenimiento();
+        LocalDate fechaInicioProgramada = LocalDate.now();
+        mantenimiento.setEstado(TipoEstado.COMPLETA);
+        mantenimiento.setIdventana(1);
+        mantenimiento.setFechaInicioProgramada(fechaInicioProgramada);
         // definir el comportamiento del mock se llama al metodo findAll y retorna el
-        // objeto de la lista
+
         when(mantenimientoService.findAll()).thenReturn(List.of(mantenimiento));
 
-        LocalDate fechaInicio = LocalDate.now();
         // realizar la peticion Get a la /api/v1/mantenimiento
         mockMvc.perform(get("/api/v1/mantenimiento"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].idventana").value(1))
-                .andExpect(jsonPath("$[0].estado").value(enumEstado.COMPLETA))
-                .andExpect(jsonPath("$[0].fechaInicio").value(fechaInicio.toString()));
+                .andExpect(jsonPath("$[0].estado").value(Matchers.equalTo("COMPLETA")))
+                .andExpect(jsonPath("$[0].fechaInicioProgramada").value(fechaInicioProgramada.toString()));
     }
 
     @Test
@@ -79,7 +87,7 @@ public class MantenimientoControllerTest {
         // REALIZAR LA PETICION GET
         mockMvc.perform(get("/api/v1/mantenimiento/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].idventana").value(1));
+                .andExpect(jsonPath("$.idventana").value(1));
     }
 
     @Test
@@ -89,13 +97,13 @@ public class MantenimientoControllerTest {
 
         // objeto de prueba
 
-        LocalDate fechaInicioPrograma = LocalDate.now();
-        LocalDate fechaFinPrograma = LocalDate.now();
+        LocalDate fechaInicioProgramada = LocalDate.now();
+        LocalDate fechaFinProgramada = LocalDate.now();
 
         Mantenimiento mantenimiento = new Mantenimiento();
         mantenimiento.setIdventana(1);
-        mantenimiento.setFechaInicioProgramada(fechaInicioPrograma);
-        mantenimiento.setFechaFinProgramada(fechaFinPrograma);
+        mantenimiento.setFechaInicioProgramada(fechaInicioProgramada);
+        mantenimiento.setFechaFinProgramada(fechaFinProgramada);
 
         // conversion a json
         String jsonBody = objectMapper.writeValueAsString(mantenimiento);
@@ -104,23 +112,26 @@ public class MantenimientoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$[0].idVentana").value(1))
-                .andExpect(jsonPath("$[0].fechaIncioPrograma").value(fechaInicioPrograma.toString()))
-                .andExpect(jsonPath("$[0].fechaFinPrograma").value(fechaFinPrograma.toString()));
+                .andExpect(jsonPath("$.idventana").value(1))
+                .andExpect(jsonPath("$.fechaInicioProgramada").value(fechaInicioProgramada.toString()))
+                .andExpect(jsonPath("$.fechaFinProgramada").value(fechaFinProgramada.toString()));
     }
 
     @Test
     public void testUpdateMantenimiento() throws Exception {
-        // definir comportamiento de mock del metodo update
-        when(mantenimientoService.updateMantenimiento(1, mantenimiento)).thenReturn(true);
 
-        LocalDate fechaIni = LocalDate.now();
-        LocalDate fechaFin = LocalDate.now();
+        Mantenimiento mantenimiento = new Mantenimiento();
+        mantenimiento.setIdventana(1);
+        // definir comportamiento de mock del metodo update
+        when(mantenimientoService.updateMantenimiento(eq(1), any(Mantenimiento.class))).thenReturn(true);
+
+        LocalDate fechaInicioProgramada = LocalDate.now();
+        LocalDate fechaFinProgramada = LocalDate.now();
         // objeto de prueba
         Mantenimiento nuevoMantenimiento = new Mantenimiento();
         nuevoMantenimiento.setIdventana(1);
-        nuevoMantenimiento.setFechaInicioProgramada(fechaIni);
-        nuevoMantenimiento.setFechaFinProgramada(fechaFin);
+        nuevoMantenimiento.setFechaInicioProgramada(fechaInicioProgramada);
+        nuevoMantenimiento.setFechaFinProgramada(fechaFinProgramada);
 
         String jsonBody = objectMapper.writeValueAsString(nuevoMantenimiento);
 
@@ -128,9 +139,9 @@ public class MantenimientoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].idventena").value(1))
-                .andExpect(jsonPath("$[0].fechaInicio").value(fechaIni.toString()))
-                .andExpect(jsonPath("$[0].fechaFin").value(fechaFin.toString()));
+                .andExpect(jsonPath("$.idventana").value(1))
+                .andExpect(jsonPath("$.fechaFinProgramada").value(fechaInicioProgramada.toString()))
+                .andExpect(jsonPath("$.fechaFinProgramada").value(fechaFinProgramada.toString()));
     }
 
     @Test

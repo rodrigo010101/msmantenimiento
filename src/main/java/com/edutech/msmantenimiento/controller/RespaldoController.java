@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
-@RequestMapping("api/v1/respaldo")
+@RequestMapping("/api/v1/respaldo")
 
 public class RespaldoController {
     @Autowired
@@ -38,12 +38,14 @@ public class RespaldoController {
     }
 
     // read
-    @GetMapping("/idrespaldo")
-    public ResponseEntity<Respaldo> readRespaldo(@PathVariable Integer idrespaldo) {
+    @GetMapping("/{idrespaldo}")
+    public ResponseEntity<Respaldo> getRespaldoById(@PathVariable Integer idrespaldo) {
         // obj
         Optional<Respaldo> respaldo = respaldoService.findById(idrespaldo);
         if (respaldo.isPresent()) {
-            return new ResponseEntity<>(respaldo.get(), HttpStatus.OK);
+            return respaldo
+                    .map(r -> new ResponseEntity<>(r, HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -63,10 +65,8 @@ public class RespaldoController {
     // create
     @PostMapping
     public ResponseEntity<Respaldo> crearRespaldo(@RequestBody Respaldo respaldo) {
-
         Respaldo nuevoRespaldo = respaldoService.save(respaldo);
-        return new ResponseEntity<>(nuevoRespaldo, HttpStatus.CREATED);
-
+        return new ResponseEntity<>(nuevoRespaldo, HttpStatus.OK);
     }
 
     // update
@@ -84,7 +84,7 @@ public class RespaldoController {
             newrespaldo.setEstado(respaldo.getEstado());
             newrespaldo.setTamano(respaldo.getTamano());
             respaldoService.save(newrespaldo);
-            return new ResponseEntity<>(newrespaldo, HttpStatus.ACCEPTED);
+            return ResponseEntity.ok(newrespaldo);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
